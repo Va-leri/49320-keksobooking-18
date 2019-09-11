@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Валерия](https://up.htmlacademy.ru/javascript/18/user/49320).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Шершнёв](https://htmlacademy.ru/profile/shv_sergey).
 
 ---
 
