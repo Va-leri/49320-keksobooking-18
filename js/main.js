@@ -36,28 +36,39 @@ var checkoutTime = ['12:00', '13:00', '14:00'];
 var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
+var ROOMS_MAX = 3;
+var GUESTS_MAX = 5;
+var PRICE_MAX = 100000;
+
+// Границы y-координат
+var Y_MIN = 130;
+var Y_MAX = 630;
+
 // Функция генерации карточки объявления
 var getCard = function (number) {
-  var card = {};
-  card.author = {
-    'avatar': 'img / avatars / user0' + (number + 1) + '.png',
-  };
-  card.offer = {
-    'title': 'Заголовок предложения',
-    'address': '600, 350',
-    'price': 1,
-    'type': getRandom(appartmentsType),
-    'rooms': 1,
-    'guests': 1,
-    'checkin': getRandom(checkinTime),
-    'checkout': getRandom(checkoutTime),
-    'features': getRandomArray(features),
-    'description': 'Строка с описанием',
-    'photos': getRandomArray(photos),
-  };
-  card.location = {
-    'x': getRandomInteger(0, mapPins.offsetWidth),
-    'y': getRandomInteger(130, 630),
+  var coordinateX = getRandomInteger(0, mapPins.offsetWidth);
+  var coordinateY = getRandomInteger(Y_MIN, Y_MAX);
+  var card = {
+    'author': {
+      'avatar': 'img/avatars/user0' + (number + 1) + '.png',
+    },
+    'offer': {
+      'title': 'Заголовок предложения',
+      'address': coordinateX + ', ' + coordinateY,
+      'price': getRandomInteger(0, PRICE_MAX),
+      'type': getRandom(appartmentsType),
+      'rooms': getRandomInteger(0, ROOMS_MAX),
+      'guests': getRandomInteger(0, GUESTS_MAX),
+      'checkin': getRandom(checkinTime),
+      'checkout': getRandom(checkoutTime),
+      'features': getRandomArray(features),
+      'description': 'Строка с описанием',
+      'photos': getRandomArray(photos),
+    },
+    'location': {
+      'x': coordinateX,
+      'y': coordinateY,
+    },
   };
   return card;
 };
@@ -83,6 +94,7 @@ var pinSize = {
   height: 70,
 };
 
+
 // Находим шаблон метки .map__pin из шаблона #pin
 var mapPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
 
@@ -94,8 +106,8 @@ var renderPins = function (appartmentsArray) {
   for (var i = 0; i < appartmentsArray.length; i++) {
     var pin = mapPinTemplate.cloneNode(true);
     pin.style = 'left: ' + (appartmentsArray[i].location.x - pinSize.width / 2) + 'px; top:' + (appartmentsArray[i].location.y - pinSize.height) + 'px;';
-    pin.src = appartmentsArray[i].author.avatar;
-    pin.alt = appartmentsArray[i].offer.title;
+    pin.querySelector('img').src = appartmentsArray[i].author.avatar;
+    pin.querySelector('img').alt = appartmentsArray[i].offer.title;
     fragment.appendChild(pin);
   }
   return fragment;
@@ -105,4 +117,4 @@ var renderPins = function (appartmentsArray) {
 mapPins.appendChild(renderPins(getAppartmentsArray(APPARTMENTS_ARRAY_LENGTH)));
 
 // У блока.map уберите класс.map--faded
-document.querySelector('.map').classList.remove('map-fadded');
+document.querySelector('.map').classList.remove('map--fadded');
