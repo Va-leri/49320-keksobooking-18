@@ -122,13 +122,13 @@ var renderPins = function (appartmentsArray) {
 // В блок mapPins вставляем фрагмент с отрисованными метками
 mapPins.appendChild(renderPins(getAppartmentsArray(APPARTMENTS_ARRAY_LENGTH)));
 
-// У блока.map уберите класс.map--faded
+
 var map = document.querySelector('.map');
-map.classList.remove('map--faded');
+
 
 var cardTemplate = document.querySelector('#card').content;
 
-var renderCard = function (cardNumber) {
+var renderCard = function (cardsArrayElement) {
   var card = cardTemplate.cloneNode(true);
 
   // Функция создания фрагмента фич
@@ -153,37 +153,162 @@ var renderCard = function (cardNumber) {
   //   }
   //   card.querySelector('.popup__photos').innerHTML = photoFragment.content;
   // };
-  card.querySelector('.popup__title').textContent = cardsArray[cardNumber].offer.title;
-  card.querySelector('.popup__text--address').textContent = cardsArray[cardNumber].offer.address;
-  card.querySelector('.popup__text--price').textContent = cardsArray[cardNumber].offer.price + '₽/ночь';
-  card.querySelector('.popup__type').textContent = appartmentsTypeRus[cardsArray[cardNumber].offer.type];
-  card.querySelector('.popup__text--capacity').textContent = cardsArray[cardNumber].offer.rooms + ' комнаты для ' + cardsArray[cardNumber].offer.guests + ' гостей';
-  card.querySelector('.popup__text--time').textContent = 'Заезд после ' + cardsArray[cardNumber].offer.checkin + ', выезд до ' + cardsArray[cardNumber].offer.checkout;
+  card.querySelector('.popup__title').textContent = cardsArrayElement.offer.title;
+  card.querySelector('.popup__text--address').textContent = cardsArrayElement.offer.address;
+  card.querySelector('.popup__text--price').textContent = cardsArrayElement.offer.price + '₽/ночь';
+  card.querySelector('.popup__type').textContent = appartmentsTypeRus[cardsArrayElement.offer.type];
+  card.querySelector('.popup__text--capacity').textContent = cardsArrayElement.offer.rooms + ' комнаты для ' + cardsArrayElement.offer.guests + ' гостей';
+  card.querySelector('.popup__text--time').textContent = 'Заезд после ' + cardsArrayElement.offer.checkin + ', выезд до ' + cardsArrayElement.offer.checkout;
 
   var featuresFragment = document.createDocumentFragment();
-  for (var i = 0; i < cardsArray[cardNumber].offer.features.length; i++) {
-    var feature = card.querySelector('.popup__feature--' + cardsArray[cardNumber].offer.features[i]).cloneNode();
+  for (var i = 0; i < cardsArrayElement.offer.features.length; i++) {
+    var feature = card.querySelector('.popup__feature--' + cardsArrayElement.offer.features[i]).cloneNode();
     featuresFragment.appendChild(feature);
   }
   card.querySelector('.popup__features').innerHTML = '';
   card.querySelector('.popup__features').appendChild(featuresFragment);
 
-  card.querySelector('.popup__description').textContent = cardsArray[cardNumber].offer.description;
+  card.querySelector('.popup__description').textContent = cardsArrayElement.offer.description;
 
   var popupPhotos = card.querySelector('.popup__photos');
   var photoFragment = document.createDocumentFragment();
-  for (var j = 0; j < cardsArray[cardNumber].offer.photos.length; j++) {
+  for (var j = 0; j < cardsArrayElement.offer.photos.length; j++) {
     var photo = card.querySelector('.popup__photo').cloneNode();
-    photo.src = cardsArray[cardNumber].offer.photos[j];
+    photo.src = cardsArrayElement.offer.photos[j];
     photoFragment.appendChild(photo);
   }
   popupPhotos.innerHTML = '';
   popupPhotos.appendChild(photoFragment);
 
-  card.querySelector('.popup__avatar').src = cardsArray[cardNumber].author.avatar;
+  card.querySelector('.popup__avatar').src = cardsArrayElement.author.avatar;
 
   return card;
 };
 
 var filtersContainer = map.querySelector('.map__filters-container');
-map.insertBefore(renderCard(0), filtersContainer);
+// map.insertBefore(renderCard(cardsArray[0]), filtersContainer);
+
+
+/* Неактивное состояние. При первом открытии, страница находится в неактивном состоянии: блок с картой находится в неактивном состоянии, форма подачи заявления заблокирована.
+ 1 Блок с картой.map содержит класс map--faded;
+2 Форма заполнения информации об объявлении.ad - form содержит класс ad - form--disabled;
+*/
+var adForm = document.querySelector('.ad-form');
+// adForm.classList.add('ad-form--disabled'); -- по умолчанию
+
+/*
+3 Все < input > и < select > формы.ad - form заблокированы с помощью атрибута disabled, добавленного на них или на их родительские блоки fieldset;
+*/
+var adFormFieldsets = adForm.querySelectorAll('fieldset');
+adFormFieldsets.forEach(function (element) {
+  element.setAttribute('disabled', 'disabled');
+});
+
+/*
+4 Форма с фильтрами.map__filters заблокирована так же, как и форма.ad - form;*/
+var mapFilters = map.querySelector('.map__filters');
+mapFilters.classList.add('map__filters--disabled');
+
+var mapFiltersElements = mapFilters.querySelectorAll('select');
+mapFiltersElements.forEach(function (element) {
+  element.setAttribute('disabled', 'disabled');
+});
+
+/*
+5 Единственное доступное действие в неактивном состоянии — перемещение метки.map__pin--main, являющейся контролом указания адреса объявления.Первое взаимодействие с меткой(mousedown) переводит страницу в активное состояние. */
+var activatePage = function () {
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  adFormFieldsets.forEach(function (element) {
+    element.removeAttribute('disabled');
+  });
+  mapFilters.classList.remove('map__filters--disabled');
+  mapFiltersElements.forEach(function (element) {
+    element.removeAttribute('disabled');
+  });
+  reloadCurrentAddress();
+};
+
+var mapPinMain = map.querySelector('.map__pin--main');
+
+mapPinMain.addEventListener('mousedown', function () {
+  activatePage();
+});
+
+var ENTER_KEYCODE = 13;
+
+mapPinMain.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    activatePage();
+  }
+});
+
+
+// Вычисление координат круглой метки
+// var getMapPinMainWidth = function () {
+//   return mapPinMain.offsetWidth;
+// };
+// var getMapPinMainHeight = function () {
+//   return mapPinMain.offsetHeight;
+// };
+var mapPinMainWidth = mapPinMain.offsetWidth;
+var mapPinMainHeight = mapPinMain.offsetHeight;
+var mapPinMainX = parseInt(mapPinMain.style.left, 10);
+var mapPinMainY = parseInt(mapPinMain.style.top, 10);
+
+var currentAddressX = mapPinMainX + Math.ceil(mapPinMainWidth / 2);
+var currentAddressY = mapPinMainY + Math.ceil(mapPinMainHeight / 2);
+
+var addressInput = adForm.querySelector('[name="address"]');
+addressInput.setAttribute('value', currentAddressX + ', ' + currentAddressY);
+
+var reloadCurrentAddress = function () {
+  mapPinMainHeight += 16;
+  currentAddressY = mapPinMainY + mapPinMainHeight;
+  addressInput.setAttribute('value', currentAddressX + ', ' + currentAddressY);
+};
+
+var MAX_CAPACITY = {
+  1: 1,
+  2: 2,
+  3: 3,
+  100: 0,
+};
+
+// Форма - adForm
+// Находим инпуты комнат и гостей
+var adFormRooms = adForm.querySelector('[name="rooms"]');
+var adFormCapacity = adForm.querySelector('[name="capacity"]');
+var adFormSubmit = adForm.querySelector('.ad-form__submit');
+
+adForm.addEventListener('submit', function (evt) {
+  console.log('submit evt');
+
+  var rooms = adFormRooms.value;
+  console.log('rooms=' + rooms);
+
+  var guests = adFormCapacity.value;
+  console.log('guests=' + guests);
+
+  var availableGuests = MAX_CAPACITY[rooms];
+  console.log('available guests = ' + availableGuests);
+
+  if (availableGuests < +guests) {
+    // adFormCapacity.valid = false;
+    console.log('вход в условие');
+    evt.preventDefault();
+    adFormCapacity.setCustomValidity('В выбранном типе апартаментов доступно размещение максимум ' + ' гостей');
+    console.log('установка сообщения об ошибке');
+  } else {
+    // adFormCapacity.valid = true;
+    adFormCapacity.setCustomValidity('');
+    console.log('условие выполнено, удаление сообщения об ошибке');
+  }
+});
+
+// adFormCapacity.addEventListener('invalid', function () {
+//   console.log('invalid');
+//   adFormCapacity.setCustomValidity('В выбранном типе апартаментов доступно размещение максимум ' + ' гостей');
+// });
+// } else {
+// adFormCapacity.setCustomValidity('');
