@@ -120,7 +120,7 @@ var renderPins = function (appartmentsArray) {
 };
 
 // В блок mapPins вставляем фрагмент с отрисованными метками
-mapPins.appendChild(renderPins(getAppartmentsArray(APPARTMENTS_ARRAY_LENGTH)));
+// mapPins.appendChild(renderPins(getAppartmentsArray(APPARTMENTS_ARRAY_LENGTH)));
 
 
 var map = document.querySelector('.map');
@@ -268,11 +268,11 @@ var reloadCurrentAddress = function () {
   addressInput.setAttribute('value', currentAddressX + ', ' + currentAddressY);
 };
 
-var MAX_CAPACITY = {
-  1: 1,
-  2: 2,
-  3: 3,
-  100: 0,
+var ROOM_CAPACITY = {
+  1: [1],
+  2: [1, 2],
+  3: [1, 2, 3],
+  100: [0],
 };
 
 // Форма - adForm
@@ -281,34 +281,22 @@ var adFormRooms = adForm.querySelector('[name="rooms"]');
 var adFormCapacity = adForm.querySelector('[name="capacity"]');
 var adFormSubmit = adForm.querySelector('.ad-form__submit');
 
-adForm.addEventListener('submit', function (evt) {
-  console.log('submit evt');
-
+var validateGuests = function () {
   var rooms = adFormRooms.value;
-  console.log('rooms=' + rooms);
-
   var guests = adFormCapacity.value;
-  console.log('guests=' + guests);
+  var availableGuests = ROOM_CAPACITY[rooms];
+  var maxGuests = availableGuests[availableGuests.length - 1];
+  var minGuests = availableGuests[0];
 
-  var availableGuests = MAX_CAPACITY[rooms];
-  console.log('available guests = ' + availableGuests);
-
-  if (availableGuests < +guests) {
-    // adFormCapacity.valid = false;
-    console.log('вход в условие');
-    evt.preventDefault();
-    adFormCapacity.setCustomValidity('В выбранном типе апартаментов доступно размещение максимум ' + ' гостей');
-    console.log('установка сообщения об ошибке');
+  if (+guests > maxGuests) {
+    adFormCapacity.setCustomValidity('В выбранном типе апартаментов доступно размещение максимум ' + maxGuests + ' гостей');
+  } else if (+guests < minGuests) {
+    adFormCapacity.setCustomValidity('В выбранном типе апартаментов должны быть гости');
   } else {
-    // adFormCapacity.valid = true;
     adFormCapacity.setCustomValidity('');
-    console.log('условие выполнено, удаление сообщения об ошибке');
   }
-});
+};
 
-// adFormCapacity.addEventListener('invalid', function () {
-//   console.log('invalid');
-//   adFormCapacity.setCustomValidity('В выбранном типе апартаментов доступно размещение максимум ' + ' гостей');
-// });
-// } else {
-// adFormCapacity.setCustomValidity('');
+adFormSubmit.addEventListener('click', function () {
+  validateGuests();
+});
