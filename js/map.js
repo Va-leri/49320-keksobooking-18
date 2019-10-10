@@ -6,7 +6,7 @@
   // Находим в разметке блок для отрисовки меток
   var mapPins = document.querySelector('.map__pins');
   // Определяем максимальную координату X для меток
-  var mapWidth = mapPins.offsetWidth;
+  // var mapWidth = mapPins.offsetWidth;
 
   /*
   4 Форма с фильтрами на карте.map__filters*/
@@ -30,6 +30,9 @@
   // Размер "хвостика" активной метки
   var ACTIVE_PIN_TAIL = 16;
 
+  // Находим блок фильтров, перед которым будем вставлять карточки
+  var filtersContainer = map.querySelector('.map__filters-container');
+
   // Блокируем форму с фильтрами и ее элементы по умолчанию
   mapFilters.classList.add('map__filters--disabled');
   mapFiltersElements.forEach(function (element) {
@@ -37,6 +40,7 @@
   });
 
   window.map = {
+    mapPins: mapPins,
     mapPinMainWidth: mapPinMainWidth,
     mapPinMainHeight: mapPinMainHeight,
     mapPinMainX: mapPinMainX,
@@ -50,6 +54,33 @@
       this.currentAddressY = mapPinMainY + mapPinMainHeight;
     },
 
+
+    // Функция вставки пинов
+    insertPins: function (dataArray) {
+      mapPins.appendChild(window.pin.renderPins(dataArray));
+    },
+
+    // Функция вставки карточки объявления
+    insertCard: function (dataArray) {
+      map.insertBefore(window.card.renderCard(dataArray[0]), filtersContainer);
+    },
+
+    // Добавляем обработчики загрузки данных с сервера
+    onSuccessLoad: function (dataArray) {
+      window.map.insertPins(dataArray);
+      window.map.insertCard(dataArray);
+    },
+
+    onErrorLoad: function () {
+      // Находим шаблон ошибки .error из шаблона #error
+      var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+      // Находим блок main в разметке
+      var mainBlock = document.querySelector('main');
+      var errorBlock = errorTemplate.cloneNode(true);
+      // Вставляем блок с ошибкой в разметку (в начало блока main)
+      mainBlock.prepend(errorBlock);
+    },
+
     // Функция активации карты
     activateMap: function () {
       map.classList.remove('map--faded');
@@ -57,6 +88,10 @@
       mapFiltersElements.forEach(function (element) {
         element.removeAttribute('disabled');
       });
+      window.load(this.onSuccessLoad, this.onErrorLoad);
+      // В блок mapPins вставляем фрагмент с отрисованными метками
+      // mapPins.appendChild(window.pin.renderPins(window.data.getAppartmentsArray(window.data.APPARTMENTS_ARRAY_LENGTH, mapWidth)));
+      // map.insertBefore(window.card.renderCard(window.data.cardsArray[0]), filtersContainer);
     },
 
     // Функция активации страницы
@@ -85,13 +120,6 @@
 Блок с картой.map содержит класс map--faded;
 */
 
-
-// В блок mapPins вставляем фрагмент с отрисованными метками
-// mapPins.appendChild(window.pin.renderPins(window.data.getAppartmentsArray(window.data.APPARTMENTS_ARRAY_LENGTH, mapWidth)));
-
-// Находим блок фильтров, перед которым будем вставлять карточки
-// var filtersContainer = map.querySelector('.map__filters-container');
-// map.insertBefore(window.card.renderCard(window.data.cardsArray[0]), filtersContainer);
 
 /*
 5 Единственное доступное действие в неактивном состоянии — перемещение метки.map__pin--main, являющейся контролом указания адреса объявления.Первое взаимодействие с меткой(mousedown) переводит страницу в активное состояние. */

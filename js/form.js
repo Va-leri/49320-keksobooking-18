@@ -35,12 +35,23 @@
     var maxGuests = availableGuests[availableGuests.length - 1];
     var minGuests = availableGuests[0];
 
-    if (+guests > maxGuests) {
-      adFormCapacity.setCustomValidity('В выбранном типе апартаментов доступно размещение максимум ' + maxGuests + ' гостей');
-    } else if (+guests < minGuests) {
-      adFormCapacity.setCustomValidity('В выбранном типе апартаментов должны быть гости');
-    } else {
-      adFormCapacity.setCustomValidity('');
+    // if (+guests > maxGuests) {
+    //   adFormCapacity.setCustomValidity('В выбранном типе апартаментов доступно размещение максимум ' + maxGuests + ' гостей');
+    // } else if (+guests < minGuests) {
+    //   adFormCapacity.setCustomValidity('В выбранном типе апартаментов должны быть гости');
+    // } else {
+    //   adFormCapacity.setCustomValidity('');
+    // }
+
+    switch (true) {
+      case (+guests > maxGuests):
+        adFormCapacity.setCustomValidity('В выбранном типе апартаментов доступно размещение максимум ' + maxGuests + ' гостей');
+        break;
+      case (+guests < minGuests):
+        adFormCapacity.setCustomValidity('В выбранном типе апартаментов должны быть гости');
+        break;
+      default:
+        adFormCapacity.setCustomValidity('');
     }
   };
 
