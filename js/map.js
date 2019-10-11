@@ -39,6 +39,14 @@
     element.setAttribute('disabled', 'disabled');
   });
 
+  // Задаем максимальное количество отображаемых меток
+  var MAX_PIN_QUANTITY = 5;
+
+  var filteredArray = [];
+  // Находим фильтр по типу жилья
+  var housingType = mapFilters.querySelector('[name="housing-type"]');
+
+
   window.map = {
     mapPins: mapPins,
     mapPinMainWidth: mapPinMainWidth,
@@ -56,8 +64,13 @@
 
 
     // Функция вставки пинов
-    insertPins: function (dataArray) {
-      mapPins.appendChild(window.pin.renderPins(dataArray));
+    insertPins: function (dataArray, quantity) {
+      var visibleArray = dataArray.slice(0, quantity);
+      mapPins.appendChild(window.pin.renderPins(visibleArray));
+    },
+
+    deletePins: function () {
+      mapPins.innerHTML = '';
     },
 
     // Функция вставки карточки объявления
@@ -65,10 +78,26 @@
       map.insertBefore(window.card.renderCard(dataArray[0]), filtersContainer);
     },
 
+
     // Добавляем обработчики загрузки данных с сервера
     onSuccessLoad: function (dataArray) {
-      window.map.insertPins(dataArray);
+      window.map.insertPins(dataArray, MAX_PIN_QUANTITY);
       window.map.insertCard(dataArray);
+      // Функция фильтрации по типу жилья
+      var onHousingTypeChange = function () {
+        window.map.deletePins();
+        switch (housingType.value) {
+          case 'any':
+            filteredArray = dataArray;
+            break;
+          default:
+            filteredArray = dataArray.filter(function (element) {
+              return element.offer.type === housingType.value;
+            });
+        }
+        window.map.insertPins(filteredArray, MAX_PIN_QUANTITY);
+      };
+      housingType.addEventListener('change', onHousingTypeChange);
     },
 
     onErrorLoad: function () {
