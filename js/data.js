@@ -29,6 +29,13 @@
     100: [0],
   };
 
+  var MIN_PRICE_BY_TYPE = {
+    'Бунгало': 0,
+    'Квартира': 1000,
+    'Дом': 5000,
+    'Дворец': 10000,
+  };
+
   // Границы y-координат
   var Y_MIN = 130;
   var Y_MAX = 630;
@@ -53,6 +60,7 @@
     Y_MAX: Y_MAX,
     APPARTMENTS_ARRAY_LENGTH: APPARTMENTS_ARRAY_LENGTH,
     ROOM_CAPACITY: ROOM_CAPACITY,
+    MIN_PRICE_BY_TYPE: MIN_PRICE_BY_TYPE,
     cardsArray: cardsArray,
 
     // Функция генерации карточки объявления

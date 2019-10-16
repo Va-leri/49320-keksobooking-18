@@ -1,14 +1,14 @@
 'use strict';
 
 (function () {
-  var cardTemplate = document.querySelector('#card').content;
-  var card = cardTemplate.cloneNode(true);
-  var featuresFragment = document.createDocumentFragment();
-  var popupPhotos = card.querySelector('.popup__photos');
-  var photoFragment = document.createDocumentFragment();
 
   window.card = {
     renderCard: function (cardsArrayElement) {
+      var cardTemplate = document.querySelector('#card').content;
+      var card = cardTemplate.cloneNode(true);
+      var featuresFragment = document.createDocumentFragment();
+      var popupPhotos = card.querySelector('.popup__photos');
+      var photoFragment = document.createDocumentFragment();
       for (var i = 0; i < cardsArrayElement.offer.features.length; i++) {
         var feature = card.querySelector('.popup__feature--' + cardsArrayElement.offer.features[i]).cloneNode();
         featuresFragment.appendChild(feature);

@@ -4,7 +4,7 @@
   // Блок карты
   var map = document.querySelector('.map');
   // Находим в разметке блок для отрисовки меток
-  var mapPins = document.querySelector('.map__pins');
+  var mapPins = map.querySelector('.map__pins');
   // Определяем максимальную координату X для меток
   // var mapWidth = mapPins.offsetWidth;
 
@@ -42,12 +42,13 @@
   // Задаем максимальное количество отображаемых меток
   var MAX_PIN_QUANTITY = 5;
 
-  var filteredArray = [];
   // Находим фильтр по типу жилья
   var housingType = mapFilters.querySelector('[name="housing-type"]');
 
+  var mapCard;
 
   window.map = {
+    mapCard: mapCard,
     mapPins: mapPins,
     mapPinMainWidth: mapPinMainWidth,
     mapPinMainHeight: mapPinMainHeight,
@@ -55,6 +56,8 @@
     mapPinMainY: mapPinMainY,
     currentAddressX: currentAddressX,
     currentAddressY: currentAddressY,
+    MAX_PIN_QUANTITY: MAX_PIN_QUANTITY,
+    housingType: housingType,
 
     // Функция пересчета адреса при активации карты
     reloadCoordinateY: function () {
@@ -73,41 +76,29 @@
       mapPins.innerHTML = '';
     },
 
+    // Функция удаления карточки объявления
+    deleteCard: function (card) {
+      card.remove();
+    },
     // Функция вставки карточки объявления
-    insertCard: function (dataArray) {
-      map.insertBefore(window.card.renderCard(dataArray[0]), filtersContainer);
-    },
+    insertCard: function (arrayElement) {
+      mapCard = document.querySelector('.map__card');
+      if (mapCard) {
+        window.map.deleteCard(mapCard);
+      }
+      // window.map.deleteCard();
+      map.insertBefore(window.card.renderCard(arrayElement), filtersContainer);
+      mapCard = document.querySelector('.map__card');
+      document.addEventListener('keydown', function (evt) {
+        // console.log('keydown');
+        // console.log(evt.keyCode === window.util.ESC_KEYCODE);
+        window.util.isEscEvent(evt, window.map.deleteCard(mapCard));
 
-
-    // Добавляем обработчики загрузки данных с сервера
-    onSuccessLoad: function (dataArray) {
-      window.map.insertPins(dataArray, MAX_PIN_QUANTITY);
-      window.map.insertCard(dataArray);
-      // Функция фильтрации по типу жилья
-      var onHousingTypeChange = function () {
-        window.map.deletePins();
-        switch (housingType.value) {
-          case 'any':
-            filteredArray = dataArray;
-            break;
-          default:
-            filteredArray = dataArray.filter(function (element) {
-              return element.offer.type === housingType.value;
-            });
-        }
-        window.map.insertPins(filteredArray, MAX_PIN_QUANTITY);
-      };
-      housingType.addEventListener('change', onHousingTypeChange);
-    },
-
-    onErrorLoad: function () {
-      // Находим шаблон ошибки .error из шаблона #error
-      var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-      // Находим блок main в разметке
-      var mainBlock = document.querySelector('main');
-      var errorBlock = errorTemplate.cloneNode(true);
-      // Вставляем блок с ошибкой в разметку (в начало блока main)
-      mainBlock.prepend(errorBlock);
+      });
+      var closeBtn = mapCard.querySelector('.popup__close');
+      closeBtn.addEventListener('click', function () {
+        window.map.deleteCard(mapCard);
+      });
     },
 
     // Функция активации карты
@@ -117,7 +108,7 @@
       mapFiltersElements.forEach(function (element) {
         element.removeAttribute('disabled');
       });
-      window.load(this.onSuccessLoad, this.onErrorLoad);
+      window.load.getData(window.load.onSuccessLoad, window.load.onErrorLoad);
       // В блок mapPins вставляем фрагмент с отрисованными метками
       // mapPins.appendChild(window.pin.renderPins(window.data.getAppartmentsArray(window.data.APPARTMENTS_ARRAY_LENGTH, mapWidth)));
       // map.insertBefore(window.card.renderCard(window.data.cardsArray[0]), filtersContainer);
@@ -139,9 +130,7 @@
   });
   // По Enter
   mapPinMain.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === window.util.ENTER_KEYCODE) {
-      window.map.activatePage();
-    }
+    window.util.isEnterEvent(evt, window.map.activatePage());
   });
 })();
 
