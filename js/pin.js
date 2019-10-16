@@ -21,6 +21,7 @@
     renderPins: function (appartmentsArray) {
       for (var i = 0; i < appartmentsArray.length; i++) {
         var pin = mapPinTemplate.cloneNode(true);
+        pin.number = i;
         pin.style = 'left: ' + (appartmentsArray[i].location.x - PIN_SIZE.width / 2) + 'px; top:' + (appartmentsArray[i].location.y - PIN_SIZE.height) + 'px;';
         pin.querySelector('img').src = appartmentsArray[i].author.avatar;
         pin.querySelector('img').alt = appartmentsArray[i].offer.title;

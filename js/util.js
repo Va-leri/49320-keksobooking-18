@@ -2,10 +2,25 @@
 
 (function () {
   var ENTER_KEYCODE = 13;
+  var ESC_KEYCODE = 27;
 
 
   window.util = {
     ENTER_KEYCODE: ENTER_KEYCODE,
+    ESC_KEYCODE: ESC_KEYCODE,
+
+    isEnterEvent: function (evt, action) {
+      // console.log('enter evt');
+      if (evt.keycode === ENTER_KEYCODE) {
+        action();
+      }
+    },
+
+    isEscEvent: function (evt, action) {
+      if (evt.keycode === ESC_KEYCODE) {
+        action();
+      }
+    },
 
     // Функция генерации случайного целого числа в диапазоне:
     getRandomInteger: function (min, max) {
