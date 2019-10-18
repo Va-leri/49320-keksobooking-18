@@ -19,16 +19,21 @@
   // Определяем размеры главной метки при заблокированной карте
   var mapPinMainWidth = mapPinMain.offsetWidth;
   var mapPinMainHeight = mapPinMain.offsetHeight;
-  // Определяем координаты главной метки при заблокированной карте
-  var mapPinMainX = parseInt(mapPinMain.style.left, 10);
-  var mapPinMainY = parseInt(mapPinMain.style.top, 10);
-
   // Определяем координаты метки на заблокированной карте:
-  var currentAddressX = mapPinMainX + Math.ceil(mapPinMainWidth / 2);
-  var currentAddressY = mapPinMainY + Math.ceil(mapPinMainHeight / 2);
-
+  var mainPinCoords = {
+    x: parseInt(mapPinMain.style.left, 10),
+    y: parseInt(mapPinMain.style.top, 10),
+  };
   // Размер "хвостика" активной метки
   var ACTIVE_PIN_TAIL = 16;
+
+  // Лимиты карты для перемещения метки
+  var mapLimits = {
+    xMin: 0,
+    xMax: map.offsetWidth - mapPinMainWidth,
+    yMin: 130,
+    yMax: 630,
+  };
 
   // Находим блок фильтров, перед которым будем вставлять карточки
   var filtersContainer = map.querySelector('.map__filters-container');
@@ -52,24 +57,38 @@
     mapPins: mapPins,
     mapPinMainWidth: mapPinMainWidth,
     mapPinMainHeight: mapPinMainHeight,
-    mapPinMainX: mapPinMainX,
-    mapPinMainY: mapPinMainY,
-    currentAddressX: currentAddressX,
-    currentAddressY: currentAddressY,
     MAX_PIN_QUANTITY: MAX_PIN_QUANTITY,
     housingType: housingType,
 
-    // Функция пересчета адреса при активации карты
-    reloadCoordinateY: function () {
-      mapPinMainHeight += ACTIVE_PIN_TAIL;
-      this.currentAddressY = mapPinMainY + mapPinMainHeight;
+    // Функция определения координат метки
+    getMainPinAddress: function () {
+      var address = {};
+      if (!map.classList.contains('map--faded')) {
+        address.y = mainPinCoords.y + mapPinMainHeight;
+      } else {
+        address.y = mainPinCoords.y + Math.ceil(mapPinMainHeight / 2);
+      }
+      address.x = mainPinCoords.x + Math.ceil(mapPinMainWidth / 2);
+      return address;
     },
-
 
     // Функция вставки пинов
     insertPins: function (dataArray, quantity) {
       var visibleArray = dataArray.slice(0, quantity);
-      mapPins.appendChild(window.pin.renderPins(visibleArray));
+      var fragment = window.pin.renderPins(visibleArray);
+      var pins = fragment.querySelectorAll('.map__pin');
+      mapPins.appendChild(fragment);
+      pins.forEach(function (element) {
+        var appartmentsNumber = element.number;
+        element.addEventListener('click', function () {
+          window.map.insertCard(dataArray[appartmentsNumber]);
+        });
+        element.addEventListener('keydown', function (evt) {
+          window.util.isEnterEvent(evt, function () {
+            window.map.insertCard(dataArray[appartmentsNumber]);
+          });
+        });
+      });
     },
 
     deletePins: function () {
@@ -86,12 +105,9 @@
       if (mapCard) {
         window.map.deleteCard(mapCard);
       }
-      // window.map.deleteCard();
       map.insertBefore(window.card.renderCard(arrayElement), filtersContainer);
       mapCard = document.querySelector('.map__card');
       document.addEventListener('keydown', function (evt) {
-        // console.log('keydown');
-        // console.log(evt.keyCode === window.util.ESC_KEYCODE);
         window.util.isEscEvent(evt, window.map.deleteCard(mapCard));
 
       });
@@ -109,15 +125,12 @@
         element.removeAttribute('disabled');
       });
       window.load.getData(window.load.onSuccessLoad, window.load.onErrorLoad);
-      // В блок mapPins вставляем фрагмент с отрисованными метками
-      // mapPins.appendChild(window.pin.renderPins(window.data.getAppartmentsArray(window.data.APPARTMENTS_ARRAY_LENGTH, mapWidth)));
-      // map.insertBefore(window.card.renderCard(window.data.cardsArray[0]), filtersContainer);
+      mapPinMainHeight += ACTIVE_PIN_TAIL;
     },
 
     // Функция активации страницы
     activatePage: function () {
       this.activateMap();
-      this.reloadCoordinateY();
       window.form.activateAdForm();
     },
 
@@ -125,7 +138,52 @@
 
   // Добавляем обработчики на метку
   // По клику
-  mapPinMain.addEventListener('mousedown', function () {
+  mapPinMain.addEventListener('mousedown', function (evt) {
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY,
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY,
+      };
+
+      startCoords.x = moveEvt.clientX;
+      startCoords.y = moveEvt.clientY;
+
+      mainPinCoords.x -= shift.x;
+      mainPinCoords.y -= shift.y;
+
+      var checkLimits = function (axis) {
+        switch (true) {
+          case (mainPinCoords[axis] < mapLimits[axis + 'Min']):
+            mainPinCoords[axis] = mapLimits[axis + 'Min'];
+            break;
+          case (mainPinCoords[axis] > mapLimits[axis + 'Max']):
+            mainPinCoords[axis] = mapLimits[axis + 'Max'];
+        }
+      };
+
+      checkLimits('x');
+      checkLimits('y');
+
+      mapPinMain.style.top = mainPinCoords.y + 'px';
+      mapPinMain.style.left = mainPinCoords.x + 'px';
+
+      window.form.setAddress();
+    };
+
+    var onMouseUp = function () {
+      mapPinMain.removeEventListener('mousemove', onMouseMove);
+      mapPinMain.removeEventListener('mouseup', onMouseUp);
+    };
+
+    mapPinMain.addEventListener('mousemove', onMouseMove);
+    mapPinMain.addEventListener('mouseup', onMouseUp);
     window.map.activatePage();
   });
   // По Enter
@@ -133,12 +191,3 @@
     window.util.isEnterEvent(evt, window.map.activatePage());
   });
 })();
-
-/* Неактивное состояние. При первом открытии, страница находится в неактивном состоянии: блок с картой находится в неактивном состоянии, форма подачи заявления заблокирована:
-Блок с картой.map содержит класс map--faded;
-*/
-
-
-/*
-5 Единственное доступное действие в неактивном состоянии — перемещение метки.map__pin--main, являющейся контролом указания адреса объявления.Первое взаимодействие с меткой(mousedown) переводит страницу в активное состояние. */
-

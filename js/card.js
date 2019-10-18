@@ -34,6 +34,22 @@
 
       return card;
     },
+
+    // openCardByPin: function (appartmentsArray) {
+    //   var pins = document.querySelectorAll('.map__pin');
+    //   pins.forEach(function (element) {
+    //     var appartmentsNumber = element.number;
+    //     element.addEventListener('click', function () {
+    //       // window.map.deleteCard();
+    //       window.map.insertCard(appartmentsArray[appartmentsNumber]);
+    //     });
+    //     element.addEventListener('keydown', function (evt) {
+    //       window.util.isEnterEvent(evt, function () {
+    //         window.map.insertCard(appartmentsArray[appartmentsNumber]);
+    //       });
+    //     });
+    //   });
+    // },
   };
 
 })();
