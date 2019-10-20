@@ -108,8 +108,9 @@
       map.insertBefore(window.card.renderCard(arrayElement), filtersContainer);
       mapCard = document.querySelector('.map__card');
       document.addEventListener('keydown', function (evt) {
-        window.util.isEscEvent(evt, window.map.deleteCard(mapCard));
-
+        window.util.isEscEvent(evt, function () {
+          window.map.deleteCard(mapCard);
+        });
       });
       var closeBtn = mapCard.querySelector('.popup__close');
       closeBtn.addEventListener('click', function () {
@@ -136,7 +137,7 @@
 
   };
 
-  // Добавляем обработчики на метку
+  // Добавляем обработчики на главную метку
   // По клику
   mapPinMain.addEventListener('mousedown', function (evt) {
     var startCoords = {
@@ -178,16 +179,18 @@
     };
 
     var onMouseUp = function () {
-      mapPinMain.removeEventListener('mousemove', onMouseMove);
-      mapPinMain.removeEventListener('mouseup', onMouseUp);
+      map.removeEventListener('mousemove', onMouseMove);
+      map.removeEventListener('mouseup', onMouseUp);
     };
 
-    mapPinMain.addEventListener('mousemove', onMouseMove);
-    mapPinMain.addEventListener('mouseup', onMouseUp);
+    map.addEventListener('mousemove', onMouseMove);
+    map.addEventListener('mouseup', onMouseUp);
     window.map.activatePage();
   });
   // По Enter
   mapPinMain.addEventListener('keydown', function (evt) {
-    window.util.isEnterEvent(evt, window.map.activatePage());
+    window.util.isEnterEvent(evt, function () {
+      window.map.activatePage();
+    });
   });
 })();
