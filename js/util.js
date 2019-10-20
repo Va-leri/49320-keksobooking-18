@@ -11,13 +11,13 @@
 
     isEnterEvent: function (evt, action) {
       // console.log('enter evt');
-      if (evt.keycode === ENTER_KEYCODE) {
+      if (evt.keyCode === ENTER_KEYCODE) {
         action();
       }
     },
 
     isEscEvent: function (evt, action) {
-      if (evt.keycode === ESC_KEYCODE) {
+      if (evt.keyCode === ESC_KEYCODE) {
         action();
       }
     },

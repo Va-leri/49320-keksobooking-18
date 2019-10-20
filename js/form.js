@@ -20,11 +20,6 @@
   // Инпут check-out
   var checkout = adForm.querySelector('[name="timeout"]');
 
-  // checkin.addEventListener('change', function () {
-  //   var time = checkin.value;
-  //   checkout.value = time;
-  // });
-
   var onTimeChange = function (evt) {
     var time = checkin.value;
     var output = checkout;
@@ -48,14 +43,6 @@
     element.setAttribute('disabled', 'disabled');
   });
 
-  // Функция заполнения поля адреса
-  var setAddress = function () {
-    addressInput.setAttribute('value', window.map.currentAddressX + ', ' + window.map.currentAddressY);
-  };
-
-  // Устанавливаем адрес метки в соответсвующее поле
-  setAddress();
-
   var validatePrice = function () {
     var housingType = adFormType.value;
     var minPrice = window.data.MIN_PRICE_BY_TYPE[window.data.APPARTMENTS_TYPE_RUS[housingType]]; adFormPrice.setAttribute('min', minPrice);
@@ -67,15 +54,6 @@
     var availableGuests = window.data.ROOM_CAPACITY[rooms];
     var maxGuests = availableGuests[availableGuests.length - 1];
     var minGuests = availableGuests[0];
-
-
-    // if (+guests > maxGuests) {
-    //   adFormCapacity.setCustomValidity('В выбранном типе апартаментов доступно размещение максимум ' + maxGuests + ' гостей');
-    // } else if (+guests < minGuests) {
-    //   adFormCapacity.setCustomValidity('В выбранном типе апартаментов должны быть гости');
-    // } else {
-    //   adFormCapacity.setCustomValidity('');
-    // }
 
     switch (true) {
       case (+guests > maxGuests):
@@ -90,19 +68,26 @@
   };
 
   window.form = {
+    setAddress: function () {
+      var address = window.map.getMainPinAddress();
+      addressInput.value = address.x + ', ' + address.y;
+    },
     activateAdForm: function () {
       adForm.classList.remove('ad-form--disabled');
       adFormFieldsets.forEach(function (element) {
         element.removeAttribute('disabled');
       });
-      setAddress();
+      this.setAddress();
       adFormSubmit.addEventListener('click', function () {
-        // adFormPrice.setAttribute('min', minPrice);
         validateGuests();
         validatePrice();
       });
     },
   };
+
+  // Устанавливаем адрес метки в соответсвующее поле
+  window.form.setAddress();
+
 })();
 
 

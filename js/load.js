@@ -5,6 +5,7 @@
   var appartmentsArray = [];
   var filteredArray = [];
 
+
   window.load = {
     appartmentsArray: appartmentsArray,
 
@@ -25,9 +26,10 @@
     onSuccessLoad: function (dataArray) {
       appartmentsArray = dataArray;
       window.map.insertPins(appartmentsArray, window.map.MAX_PIN_QUANTITY);
+      // window.card.openCardByPin(appartmentsArray);
 
       // Находим пины в разметке
-      var pins = document.querySelectorAll('.map__pin');
+      // var pins = document.querySelectorAll('.map__pin');
 
       // var onPinClick = function (evt) {
       //   if (document.querySelector('.map__card')) {
@@ -37,18 +39,19 @@
       //   window.map.insertCard(appartmentsArray[appartmentsNumber]);
       // };
 
-      pins.forEach(function (element) {
-        var appartmentsNumber = element.number;
-        element.addEventListener('click', function () {
-          // window.map.deleteCard();
-          window.map.insertCard(appartmentsArray[appartmentsNumber]);
-        });
-        element.addEventListener('keydown', function (evt) {
-          window.util.isEnterEvent(evt, function () {
-            window.map.insertCard(appartmentsArray[appartmentsNumber]);
-          });
-        });
-      });
+
+      // pins.forEach(function (element) {
+      //   var appartmentsNumber = element.number;
+      //   element.addEventListener('click', function () {
+      //     // window.map.deleteCard();
+      //     window.map.insertCard(appartmentsArray[appartmentsNumber]);
+      //   });
+      //   element.addEventListener('keydown', function (evt) {
+      //     window.util.isEnterEvent(evt, function () {
+      //       window.map.insertCard(appartmentsArray[appartmentsNumber]);
+      //     });
+      //   });
+      // });
 
 
       // window.map.insertCard(dataArray);
@@ -65,6 +68,7 @@
             });
         }
         window.map.insertPins(filteredArray, window.map.MAX_PIN_QUANTITY);
+        window.card.openCardByPin(filteredArray);
       };
       window.map.housingType.addEventListener('change', onHousingTypeChange);
     },
