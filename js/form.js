@@ -32,9 +32,6 @@
     output.value = time;
   };
 
-  checkin.addEventListener('change', onTimeChange);
-  checkout.addEventListener('change', onTimeChange);
-
   // adForm.classList.add('ad-form--disabled'); -- по умолчанию
   /*
   3 Все < input > и < select > формы.ad - form заблокированы с помощью атрибута disabled, добавленного на них или на их родительские блоки fieldset;
@@ -67,9 +64,22 @@
     }
   };
 
+  var onSuccessSubmit = function () {
+    window.main.showSuccessMessage();
+    window.map.deactivateMap();
+    window.form.deactivateAdForm();
+
+    adForm.removeEventListener('submit', window.form.onSubmitBtnPress);
+  };
+
+  var onErrorSubmit = function () {
+    // Находим шаблон ошибки .error из шаблона #error
+    window.main.showError();
+  };
+
   window.form = {
-    setAddress: function () {
-      var address = window.map.getMainPinAddress();
+    setAddress: function (address) {
+      // var address = window.map.getMainPinAddress(window.map.mainPinCoords);
       addressInput.value = address.x + ', ' + address.y;
     },
     activateAdForm: function () {
@@ -77,16 +87,38 @@
       adFormFieldsets.forEach(function (element) {
         element.removeAttribute('disabled');
       });
-      this.setAddress();
+      address = window.map.getMainPinAddress(window.map.mainPinDefaultCoords);
+      this.setAddress(address);
+      checkin.addEventListener('change', onTimeChange);
+      checkout.addEventListener('change', onTimeChange);
       adFormSubmit.addEventListener('click', function () {
         validateGuests();
         validatePrice();
       });
+      adForm.addEventListener('submit', window.form.onSubmitBtnPress);
     },
+
+    onSubmitBtnPress: function (evt) {
+      evt.preventDefault();
+      window.upload(window.data.UPLOAD_URL, new FormData(adForm), onSuccessSubmit, onErrorSubmit);
+
+    },
+
+    deactivateAdForm: function () {
+      adForm.reset();
+      adForm.classList.add('ad-form--disabled');
+      adFormFieldsets.forEach(function (element) {
+        element.setAttribute('disabled', 'disabled');
+      });
+      address = window.map.getMainPinAddress(window.map.mainPinDefaultCoords);
+      window.form.setAddress(address);
+
+    }
   };
 
   // Устанавливаем адрес метки в соответсвующее поле
-  window.form.setAddress();
+  var address = window.map.getMainPinAddress(window.map.mainPinDefaultCoords);
+  window.form.setAddress(address);
 
 })();
 

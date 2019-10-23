@@ -45,6 +45,7 @@
 
   var cardsArray = [];
 
+  var UPLOAD_URL = 'https://js.dump.academy/keksobooking';
 
   window.data = {
     APPARTMENTS_TYPE: APPARTMENTS_TYPE,
@@ -62,6 +63,7 @@
     ROOM_CAPACITY: ROOM_CAPACITY,
     MIN_PRICE_BY_TYPE: MIN_PRICE_BY_TYPE,
     cardsArray: cardsArray,
+    UPLOAD_URL: UPLOAD_URL,
 
     // Функция генерации карточки объявления
     getCard: function (number, maxX) {

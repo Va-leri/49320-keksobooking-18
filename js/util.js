@@ -17,7 +17,9 @@
     },
 
     isEscEvent: function (evt, action) {
+      console.log('is event');
       if (evt.keyCode === ESC_KEYCODE) {
+        console.log('esc evt');
         action();
       }
     },
@@ -50,6 +52,10 @@
     // Функция генерации массива случайной длины из перемешанного массива
     getRandomArray: function (array) {
       return this.shuffleArray(array).slice(0, this.getRandomInteger(1, array.length));
+    },
+
+    removeNode: function (element) {
+      element.remove();
     },
   };
 })();

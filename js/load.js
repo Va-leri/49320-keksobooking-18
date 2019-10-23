@@ -26,38 +26,12 @@
     onSuccessLoad: function (dataArray) {
       appartmentsArray = dataArray;
       window.map.insertPins(appartmentsArray, window.map.MAX_PIN_QUANTITY);
-      // window.card.openCardByPin(appartmentsArray);
-
-      // Находим пины в разметке
-      // var pins = document.querySelectorAll('.map__pin');
-
-      // var onPinClick = function (evt) {
-      //   if (document.querySelector('.map__card')) {
-      //     window.map.deleteCard();
-      //   }
-      //   var appartmentsNumber = evt.currentTarget.number;
-      //   window.map.insertCard(appartmentsArray[appartmentsNumber]);
-      // };
-
-
-      // pins.forEach(function (element) {
-      //   var appartmentsNumber = element.number;
-      //   element.addEventListener('click', function () {
-      //     // window.map.deleteCard();
-      //     window.map.insertCard(appartmentsArray[appartmentsNumber]);
-      //   });
-      //   element.addEventListener('keydown', function (evt) {
-      //     window.util.isEnterEvent(evt, function () {
-      //       window.map.insertCard(appartmentsArray[appartmentsNumber]);
-      //     });
-      //   });
-      // });
-
 
       // window.map.insertCard(dataArray);
       // Функция фильтрации по типу жилья
       var onHousingTypeChange = function () {
         window.map.deletePins();
+        window.map.deleteCard();
         switch (window.map.housingType.value) {
           case 'any':
             filteredArray = dataArray;
@@ -68,19 +42,13 @@
             });
         }
         window.map.insertPins(filteredArray, window.map.MAX_PIN_QUANTITY);
-        window.card.openCardByPin(filteredArray);
+        // window.card.openCardByPin(filteredArray);
       };
       window.map.housingType.addEventListener('change', onHousingTypeChange);
     },
 
     onErrorLoad: function () {
-      // Находим шаблон ошибки .error из шаблона #error
-      var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-      // Находим блок main в разметке
-      var mainBlock = document.querySelector('main');
-      var errorBlock = errorTemplate.cloneNode(true);
-      // Вставляем блок с ошибкой в разметку (в начало блока main)
-      mainBlock.prepend(errorBlock);
+      window.main.showError();
     },
   };
 })();
