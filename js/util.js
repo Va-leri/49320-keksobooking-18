@@ -17,9 +17,7 @@
     },
 
     isEscEvent: function (evt, action) {
-      console.log('is event');
       if (evt.keyCode === ESC_KEYCODE) {
-        console.log('esc evt');
         action();
       }
     },

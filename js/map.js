@@ -122,11 +122,16 @@
       }
       map.insertBefore(window.card.renderCard(arrayElement), filtersContainer);
       window.map.mapCard = document.querySelector('.map__card');
-      document.addEventListener('keydown', function (evt) {
+
+      // Обработчик Esc
+      var onCardEscPress = function (evt) {
         window.util.isEscEvent(evt, function () {
           window.map.deleteCard();
         });
-      });
+        document.removeEventListener('keydown', onCardEscPress);
+      };
+
+      document.addEventListener('keydown', onCardEscPress);
       var closeBtn = window.map.mapCard.querySelector('.popup__close');
       closeBtn.addEventListener('click', function () {
         window.map.deleteCard();
