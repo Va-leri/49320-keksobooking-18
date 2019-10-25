@@ -20,10 +20,18 @@
   var mapPinMainWidth = mapPinMain.offsetWidth;
   var mapPinMainHeight = mapPinMain.offsetHeight;
   // Определяем координаты метки на заблокированной карте:
-  var mainPinCoords = {
-    x: parseInt(mapPinMain.style.left, 10),
-    y: parseInt(mapPinMain.style.top, 10),
+  // var mainPinCoords = {
+  //   x: mapPinMain.offsetLeft,
+  //   y: mapPinMain.offsetLeft,
+  // };
+  var mainPinDefaultCoords = {
+    x: mapPinMain.offsetLeft,
+    y: mapPinMain.offsetTop,
   };
+  var mainPinCoords = {};
+  mainPinCoords.x = mainPinDefaultCoords.x;
+  mainPinCoords.y = mainPinDefaultCoords.y;
+
   // Размер "хвостика" активной метки
   var ACTIVE_PIN_TAIL = 16;
 
@@ -52,23 +60,27 @@
 
   var mapCard;
 
+
   window.map = {
     mapCard: mapCard,
     mapPins: mapPins,
+    mapPinMain: mapPinMain,
+    mainPinDefaultCoords: mainPinDefaultCoords,
     mapPinMainWidth: mapPinMainWidth,
     mapPinMainHeight: mapPinMainHeight,
     MAX_PIN_QUANTITY: MAX_PIN_QUANTITY,
     housingType: housingType,
+    mainPinCoords: mainPinCoords,
 
     // Функция определения координат метки
-    getMainPinAddress: function () {
+    getMainPinAddress: function (coords) {
       var address = {};
       if (!map.classList.contains('map--faded')) {
-        address.y = mainPinCoords.y + mapPinMainHeight;
+        address.y = coords.y + mapPinMainHeight;
       } else {
-        address.y = mainPinCoords.y + Math.ceil(mapPinMainHeight / 2);
+        address.y = coords.y + Math.ceil(mapPinMainHeight / 2);
       }
-      address.x = mainPinCoords.x + Math.ceil(mapPinMainWidth / 2);
+      address.x = coords.x + Math.ceil(mapPinMainWidth / 2);
       return address;
     },
 
@@ -92,29 +104,37 @@
     },
 
     deletePins: function () {
-      mapPins.innerHTML = '';
+      var pins = map.querySelectorAll('.map__pin:not(.map__pin--main)');
+      pins.forEach(function (element) {
+        element.remove();
+      });
     },
 
     // Функция удаления карточки объявления
-    deleteCard: function (card) {
-      card.remove();
+    deleteCard: function () {
+      window.map.mapCard.remove();
     },
     // Функция вставки карточки объявления
     insertCard: function (arrayElement) {
-      mapCard = document.querySelector('.map__card');
-      if (mapCard) {
-        window.map.deleteCard(mapCard);
+      // mapCard = document.querySelector('.map__card');
+      if (window.map.mapCard) {
+        window.map.deleteCard();
       }
       map.insertBefore(window.card.renderCard(arrayElement), filtersContainer);
-      mapCard = document.querySelector('.map__card');
-      document.addEventListener('keydown', function (evt) {
+      window.map.mapCard = document.querySelector('.map__card');
+
+      // Обработчик Esc
+      var onCardEscPress = function (evt) {
         window.util.isEscEvent(evt, function () {
-          window.map.deleteCard(mapCard);
+          window.map.deleteCard();
         });
-      });
-      var closeBtn = mapCard.querySelector('.popup__close');
+        document.removeEventListener('keydown', onCardEscPress);
+      };
+
+      document.addEventListener('keydown', onCardEscPress);
+      var closeBtn = window.map.mapCard.querySelector('.popup__close');
       closeBtn.addEventListener('click', function () {
-        window.map.deleteCard(mapCard);
+        window.map.deleteCard();
       });
     },
 
@@ -125,6 +145,9 @@
       mapFiltersElements.forEach(function (element) {
         element.removeAttribute('disabled');
       });
+      mainPinCoords.x = mapPinMain.offsetLeft;
+      mainPinCoords.y = mapPinMain.offsetTop;
+
       window.load.getData(window.load.onSuccessLoad, window.load.onErrorLoad);
       mapPinMainHeight += ACTIVE_PIN_TAIL;
     },
@@ -135,11 +158,29 @@
       window.form.activateAdForm();
     },
 
+    deactivateMap: function () {
+      map.classList.add('map--faded');
+      mapFilters.classList.add('map__filters--disabled');
+      mapFiltersElements.forEach(function (element) {
+        element.setAttribute('disabled', 'disabled');
+      });
+      mapPinMainHeight -= ACTIVE_PIN_TAIL;
+      if (window.map.mapCard) {
+        window.map.deleteCard();
+      }
+      window.map.deletePins();
+      window.map.mapPinMain.style.left = mainPinDefaultCoords.x + 'px';
+      window.map.mapPinMain.style.top = mainPinDefaultCoords.y + 'px';
+    }
   };
 
   // Добавляем обработчики на главную метку
   // По клику
   mapPinMain.addEventListener('mousedown', function (evt) {
+    if (map.classList.contains('map--faded')) {
+      window.map.activatePage();
+    }
+
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY,
@@ -175,17 +216,18 @@
       mapPinMain.style.top = mainPinCoords.y + 'px';
       mapPinMain.style.left = mainPinCoords.x + 'px';
 
-      window.form.setAddress();
+      var address = window.map.getMainPinAddress(mainPinCoords);
+      window.form.setAddress(address);
     };
 
     var onMouseUp = function () {
-      map.removeEventListener('mousemove', onMouseMove);
-      map.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
     };
 
-    map.addEventListener('mousemove', onMouseMove);
-    map.addEventListener('mouseup', onMouseUp);
-    window.map.activatePage();
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+
   });
   // По Enter
   mapPinMain.addEventListener('keydown', function (evt) {
@@ -193,4 +235,5 @@
       window.map.activatePage();
     });
   });
+
 })();

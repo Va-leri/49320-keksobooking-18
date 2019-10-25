@@ -51,5 +51,9 @@
     getRandomArray: function (array) {
       return this.shuffleArray(array).slice(0, this.getRandomInteger(1, array.length));
     },
+
+    removeNode: function (element) {
+      element.remove();
+    },
   };
 })();
