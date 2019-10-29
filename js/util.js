@@ -4,20 +4,22 @@
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
 
+  var Keycode = {
+    ENTER: ENTER_KEYCODE,
+    ESC: ESC_KEYCODE,
+  };
 
   window.util = {
-    ENTER_KEYCODE: ENTER_KEYCODE,
-    ESC_KEYCODE: ESC_KEYCODE,
 
     isEnterEvent: function (evt, action) {
       // console.log('enter evt');
-      if (evt.keyCode === ENTER_KEYCODE) {
+      if (evt.keyCode === Keycode.ENTER) {
         action();
       }
     },
 
     isEscEvent: function (evt, action) {
-      if (evt.keyCode === ESC_KEYCODE) {
+      if (evt.keyCode === Keycode.ESC) {
         action();
       }
     },

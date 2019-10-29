@@ -4,7 +4,7 @@
   // Исходные данные
   var APPARTMENTS_TYPE = ['palace', 'flat', 'house', 'bungalo'];
 
-  var APPARTMENTS_TYPE_RUS = {
+  var appartmentsTypeToRus = {
     'palace': 'Дворец',
     'flat': 'Квартира',
     'house': 'Дом',
@@ -22,18 +22,28 @@
   var GUESTS_MAX = 5;
   var PRICE_MAX = 100000;
 
-  var ROOM_CAPACITY = {
+  var roomsToCapacity = {
     1: [1],
     2: [1, 2],
     3: [1, 2, 3],
     100: [0],
   };
 
-  var MIN_PRICE_BY_TYPE = {
+  var typeToMinPrice = {
     'Бунгало': 0,
     'Квартира': 1000,
     'Дом': 5000,
     'Дворец': 10000,
+  };
+
+  var priceLevelToMinPrice = {
+    middle: 10000,
+    high: 50000,
+  };
+
+  var priceLevelToMaxPrice = {
+    low: 10000,
+    middle: 50000,
   };
 
   // Границы y-координат
@@ -44,12 +54,15 @@
   var APPARTMENTS_ARRAY_LENGTH = 8;
 
   var cardsArray = [];
+  var appartmentsArray = [];
 
   var UPLOAD_URL = 'https://js.dump.academy/keksobooking';
+  var LOAD_URL = 'https://js.dump.academy/keksobooking/data';
 
   window.data = {
+    appartmentsArray: appartmentsArray,
     APPARTMENTS_TYPE: APPARTMENTS_TYPE,
-    APPARTMENTS_TYPE_RUS: APPARTMENTS_TYPE_RUS,
+    appartmentsTypeToRus: appartmentsTypeToRus,
     CHECKIN_TIME: CHECKIN_TIME,
     CHECKOUT_TIME: CHECKOUT_TIME,
     FEATURES: FEATURES,
@@ -60,10 +73,16 @@
     Y_MIN: Y_MIN,
     Y_MAX: Y_MAX,
     APPARTMENTS_ARRAY_LENGTH: APPARTMENTS_ARRAY_LENGTH,
-    ROOM_CAPACITY: ROOM_CAPACITY,
-    MIN_PRICE_BY_TYPE: MIN_PRICE_BY_TYPE,
+    roomsToCapacity: roomsToCapacity,
+    typeToMinPrice: typeToMinPrice,
     cardsArray: cardsArray,
-    UPLOAD_URL: UPLOAD_URL,
+    priceLevelToMinPrice: priceLevelToMinPrice,
+    priceLevelToMaxPrice: priceLevelToMaxPrice,
+
+    Url: {
+      UPLOAD: UPLOAD_URL,
+      LOAD: LOAD_URL,
+    },
 
     // Функция генерации карточки объявления
     getCard: function (number, maxX) {
