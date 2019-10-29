@@ -42,13 +42,13 @@
 
   var validatePrice = function () {
     var housingType = adFormType.value;
-    var minPrice = window.data.MIN_PRICE_BY_TYPE[window.data.APPARTMENTS_TYPE_RUS[housingType]]; adFormPrice.setAttribute('min', minPrice);
+    var minPrice = window.data.typeToMinPrice[window.data.appartmentsTypeToRus[housingType]]; adFormPrice.setAttribute('min', minPrice);
   };
 
   var validateGuests = function () {
     var rooms = adFormRooms.value;
     var guests = adFormCapacity.value;
-    var availableGuests = window.data.ROOM_CAPACITY[rooms];
+    var availableGuests = window.data.roomsToCapacity[rooms];
     var maxGuests = availableGuests[availableGuests.length - 1];
     var minGuests = availableGuests[0];
 
@@ -100,7 +100,7 @@
 
     onSubmitBtnPress: function (evt) {
       evt.preventDefault();
-      window.upload(window.data.UPLOAD_URL, new FormData(adForm), onSuccessSubmit, onErrorSubmit);
+      window.upload(window.data.Url.UPLOAD, new FormData(adForm), onSuccessSubmit, onErrorSubmit);
 
     },
 

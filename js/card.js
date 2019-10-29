@@ -22,7 +22,7 @@
       card.querySelector('.popup__title').textContent = cardsArrayElement.offer.title;
       card.querySelector('.popup__text--address').textContent = cardsArrayElement.offer.address;
       card.querySelector('.popup__text--price').textContent = cardsArrayElement.offer.price + '₽/ночь';
-      card.querySelector('.popup__type').textContent = window.data.APPARTMENTS_TYPE_RUS[cardsArrayElement.offer.type];
+      card.querySelector('.popup__type').textContent = window.data.appartmentsTypeToRus[cardsArrayElement.offer.type];
       card.querySelector('.popup__text--capacity').textContent = cardsArrayElement.offer.rooms + ' комнаты для ' + cardsArrayElement.offer.guests + ' гостей';
       card.querySelector('.popup__text--time').textContent = 'Заезд после ' + cardsArrayElement.offer.checkin + ', выезд до ' + cardsArrayElement.offer.checkout;
       card.querySelector('.popup__features').innerHTML = '';

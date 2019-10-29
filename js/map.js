@@ -20,10 +20,6 @@
   var mapPinMainWidth = mapPinMain.offsetWidth;
   var mapPinMainHeight = mapPinMain.offsetHeight;
   // Определяем координаты метки на заблокированной карте:
-  // var mainPinCoords = {
-  //   x: mapPinMain.offsetLeft,
-  //   y: mapPinMain.offsetLeft,
-  // };
   var mainPinDefaultCoords = {
     x: mapPinMain.offsetLeft,
     y: mapPinMain.offsetTop,
@@ -37,8 +33,8 @@
 
   // Лимиты карты для перемещения метки
   var mapLimits = {
-    xMin: 0,
-    xMax: map.offsetWidth - mapPinMainWidth,
+    xMin: 0 - mapPinMainWidth / 2,
+    xMax: map.offsetWidth - mapPinMainWidth + mapPinMainWidth / 2,
     yMin: 130,
     yMax: 630,
   };
@@ -58,18 +54,72 @@
   // Находим фильтр по типу жилья
   var housingType = mapFilters.querySelector('[name="housing-type"]');
 
+  // Находим фильтр по цене
+  var housingPrice = mapFilters.querySelector('[name="housing-price"]');
+
+  // Находим фильтр по числу комнат
+  var housingRooms = mapFilters.querySelector('[name="housing-rooms"]');
+
+  // Находим фильтр по числу гостей
+  var housingGuests = mapFilters.querySelector('[name="housing-guests"]');
+
+  // Находим фильтры по удобствам
+  var housingFeaturesBlock = mapFilters.querySelector('#housing-features');
+  var housingFeatures = housingFeaturesBlock.querySelectorAll('input');
+
   var mapCard;
 
+  // var appartmentsArray = [];
+  // var filtersValue = {};
+
+  // Добавляем обработчики загрузки данных с сервера
+  var onSuccessLoad = function (dataArray) {
+    window.data.appartmentsArray = dataArray;
+    window.map.insertPins(window.data.appartmentsArray, window.map.MAX_PIN_QUANTITY);
+
+    // Добавляем обработчики смены фильтров
+    window.map.mapFiltersElements.forEach(function (element) {
+      element.addEventListener('change', onFilterChage);
+    });
+    housingFeatures.forEach(function (element) {
+      element.addEventListener('change', onFilterChage);
+    });
+  };
+
+  var onErrorLoad = function () {
+    window.main.showError();
+  };
+
+  // Обработчик смены фильтра
+  var onFilterChage = function () {
+    window.debounce(function () {
+      window.map.deletePins();
+      if (window.map.mapCard) {
+        window.map.deleteCard();
+      }
+
+      var filteredArray = window.filter();
+      window.map.insertPins(filteredArray, window.map.MAX_PIN_QUANTITY);
+    });
+
+  };
 
   window.map = {
     mapCard: mapCard,
     mapPins: mapPins,
+    mapFilters: mapFilters,
+    mapFiltersElements: mapFiltersElements,
     mapPinMain: mapPinMain,
     mainPinDefaultCoords: mainPinDefaultCoords,
     mapPinMainWidth: mapPinMainWidth,
     mapPinMainHeight: mapPinMainHeight,
     MAX_PIN_QUANTITY: MAX_PIN_QUANTITY,
     housingType: housingType,
+    housingPrice: housingPrice,
+    housingRooms: housingRooms,
+    housingGuests: housingGuests,
+    housingFeaturesBlock: housingFeaturesBlock,
+    housingFeatures: housingFeatures,
     mainPinCoords: mainPinCoords,
 
     // Функция определения координат метки
@@ -144,11 +194,12 @@
       mapFilters.classList.remove('map__filters--disabled');
       mapFiltersElements.forEach(function (element) {
         element.removeAttribute('disabled');
+        // element.addEventListener('change', window.load.onFilterChage);
       });
       mainPinCoords.x = mapPinMain.offsetLeft;
       mainPinCoords.y = mapPinMain.offsetTop;
 
-      window.load.getData(window.load.onSuccessLoad, window.load.onErrorLoad);
+      window.load.getData(window.data.Url.LOAD, onSuccessLoad, onErrorLoad);
       mapPinMainHeight += ACTIVE_PIN_TAIL;
     },
 
@@ -160,9 +211,11 @@
 
     deactivateMap: function () {
       map.classList.add('map--faded');
+      mapFilters.reset();
       mapFilters.classList.add('map__filters--disabled');
       mapFiltersElements.forEach(function (element) {
         element.setAttribute('disabled', 'disabled');
+        element.addEventListener('change', window.load.onFilterChage);
       });
       mapPinMainHeight -= ACTIVE_PIN_TAIL;
       if (window.map.mapCard) {
