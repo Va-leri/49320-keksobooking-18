@@ -9,16 +9,8 @@
     'guests',
   ];
 
-  /* var filterNamesToNodes = {
-    'type': window.map.housingType,
-    'price': window.map.housingPrice,
-    'rooms': window.map.housingRooms,
-    'guests': window.map.housingGuests,
-    'features': window.map.housingFeaturesBlock,
-  }; */
-
   var simpleFilter = function (filterName) {
-    var filter = window.map.mapFilters.querySelector('#housing-' + filterName);
+    var filter = window.map.filters.querySelector('#housing-' + filterName);
     // var filter = filterNamesToNodes[filterName];
     switch (filter.value) {
       case 'any':
@@ -68,6 +60,7 @@
         return element.offer.features.includes(feature.value);
       });
     });
+
     return filteredArray;
   };
 })();

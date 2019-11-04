@@ -14,19 +14,17 @@
   var fragment = document.createDocumentFragment();
 
   window.pin = {
-    // PIN_SIZE: PIN_SIZE,
-    // mapPinTemplate: mapPinTemplate,
-
     // Функция отрисовки меток во фрагмент
     renderPins: function (appartmentsArray) {
-      for (var i = 0; i < appartmentsArray.length; i++) {
+
+      appartmentsArray.forEach(function (element, index) {
         var pin = mapPinTemplate.cloneNode(true);
-        pin.number = i;
-        pin.style = 'left: ' + (appartmentsArray[i].location.x - PIN_SIZE.width / 2) + 'px; top:' + (appartmentsArray[i].location.y - PIN_SIZE.height) + 'px;';
-        pin.querySelector('img').src = appartmentsArray[i].author.avatar;
-        pin.querySelector('img').alt = appartmentsArray[i].offer.title;
+        pin.number = index;
+        pin.style = 'left: ' + (element.location.x - PIN_SIZE.width / 2) + 'px; top:' + (element.location.y - PIN_SIZE.height) + 'px;';
+        pin.querySelector('img').src = element.author.avatar;
+        pin.querySelector('img').alt = element.offer.title;
         fragment.appendChild(pin);
-      }
+      });
       return fragment;
     },
   };

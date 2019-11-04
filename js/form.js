@@ -5,12 +5,21 @@
   var adForm = document.querySelector('.ad-form');
   // Находим элементы формы:
   var adFormFieldsets = adForm.querySelectorAll('fieldset');
+  // Находим инпут аватарки пользователя:
+  var avatarInput = adForm.querySelector('.ad-form-header__input');
+  // Находим блок превью аватарки пользователя:
+  var avatarPreview = adForm.querySelector('.ad-form-header__preview');
+  // Сохраняем src заглушки аватарки
+  var avatarMockSrc = avatarPreview.querySelector('img').src;
   // Находим поле адреса метки:
   var addressInput = adForm.querySelector('[name="address"]');
   // Находим инпуты комнат и гостей:
   var adFormRooms = adForm.querySelector('[name="rooms"]');
   var adFormCapacity = adForm.querySelector('[name="capacity"]');
+  // Находим кнопку отправки формы
   var adFormSubmit = adForm.querySelector('.ad-form__submit');
+  // Находим кнопку очистки формы
+  var adFormReset = adForm.querySelector('.ad-form__reset');
   // Инпут типа жилья
   var adFormType = adForm.querySelector('[name="type"]');
   // Инпут цены
@@ -19,6 +28,13 @@
   var checkin = adForm.querySelector('[name="timein"]');
   // Инпут check-out
   var checkout = adForm.querySelector('[name="timeout"]');
+  // Инпут загрузки фото жилья
+  var appartmentsPhotoInput = adForm.querySelector('.ad-form__input');
+  // Блок для превью загруженного фото жилья
+  var appartmentsPhotoPreview = adForm.querySelector('.ad-form__photo');
+  var getAppartmentsPhoto = function () {
+    return appartmentsPhotoPreview.querySelector('img');
+  };
 
   var onTimeChange = function (evt) {
     var time = checkin.value;
@@ -67,7 +83,7 @@
   var onSuccessSubmit = function () {
     window.main.showSuccessMessage();
     window.map.deactivateMap();
-    window.form.deactivateAdForm();
+    window.form.deactivate();
 
     adForm.removeEventListener('submit', window.form.onSubmitBtnPress);
   };
@@ -78,22 +94,33 @@
   };
 
   window.form = {
+    getAppartmentsPhoto: getAppartmentsPhoto,
+
     setAddress: function (address) {
       // var address = window.map.getMainPinAddress(window.map.mainPinCoords);
       addressInput.value = address.x + ', ' + address.y;
     },
-    activateAdForm: function () {
+    activate: function () {
       adForm.classList.remove('ad-form--disabled');
       adFormFieldsets.forEach(function (element) {
         element.removeAttribute('disabled');
       });
       address = window.map.getMainPinAddress(window.map.mainPinDefaultCoords);
       this.setAddress(address);
+      // Добавляем возможность загрузки фото жилья:
+      window.loadImg(avatarInput, avatarPreview);
       checkin.addEventListener('change', onTimeChange);
       checkout.addEventListener('change', onTimeChange);
+      // Добавляем возможность загрузки фото жилья:
+      window.loadImg(appartmentsPhotoInput, appartmentsPhotoPreview);
       adFormSubmit.addEventListener('click', function () {
         validateGuests();
         validatePrice();
+      });
+      adFormReset.addEventListener('click', function (evt) {
+        evt.preventDefault();
+        window.map.deactivateMap();
+        window.form.deactivate();
       });
       adForm.addEventListener('submit', window.form.onSubmitBtnPress);
     },
@@ -104,8 +131,13 @@
 
     },
 
-    deactivateAdForm: function () {
+    deactivate: function () {
       adForm.reset();
+      avatarPreview.querySelector('img').src = avatarMockSrc;
+      var appartmentsPhoto = getAppartmentsPhoto();
+      if (appartmentsPhoto) {
+        appartmentsPhoto.src = '';
+      }
       adForm.classList.add('ad-form--disabled');
       adFormFieldsets.forEach(function (element) {
         element.setAttribute('disabled', 'disabled');
