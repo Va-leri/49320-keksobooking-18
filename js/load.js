@@ -1,18 +1,11 @@
 'use strict';
 
 (function () {
-  // var URL = 'https://js.dump.academy/keksobooking/data';
-  // var appartmentsArray = [];
-  // var filteredArray = [];
-
-
   window.load = {
-    // appartmentsArray: appartmentsArray,
-
     getData: function (url, onSuccess, onError) {
       var xhr = new XMLHttpRequest();
       xhr.addEventListener('load', function () {
-        if (xhr.status === 200) {
+        if (xhr.status === window.util.XhrStatus.DONE) {
           onSuccess(xhr.response);
         } else {
           onError();

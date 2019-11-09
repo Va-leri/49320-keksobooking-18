@@ -1,15 +1,17 @@
 'use strict';
 
 (function () {
-  var ENTER_KEYCODE = 13;
-  var ESC_KEYCODE = 27;
-
   var Keycode = {
-    ENTER: ENTER_KEYCODE,
-    ESC: ESC_KEYCODE,
+    ENTER: 13,
+    ESC: 27,
+  };
+
+  var XhrStatus = {
+    DONE: 200,
   };
 
   window.util = {
+    XhrStatus: XhrStatus,
 
     isEnterEvent: function (evt, action) {
       // console.log('enter evt');
