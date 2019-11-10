@@ -64,7 +64,7 @@
           node: popupType,
           requiredData: [cardsArrayElement.offer.type],
           set: function () {
-            popupType.textContent = window.data.appartmentsTypeToRus[cardsArrayElement.offer.type];
+            popupType.textContent = window.data.appartmentsTypeToTranslation[cardsArrayElement.offer.type];
           },
         },
         capacity: {
@@ -129,93 +129,6 @@
       });
 
       return card;
-
-      /* var blockToRequiredData = {
-        // Сделать все массивами?
-        popupAvatar: cardsArrayElement.author.avatar,
-        popupTitle: cardsArrayElement.offer.title,
-        popupAddress: cardsArrayElement.offer.address,
-        popupPrice: cardsArrayElement.offer.price,
-        popupType: cardsArrayElement.offer.type,
-        popupCapacity: [cardsArrayElement.offer.rooms, cardsArrayElement.offer.guests],
-        popupTime: [cardsArrayElement.offer.checkin, cardsArrayElement.offer.checkout],
-        popupFeatures: cardsArrayElement.offer.features[0],
-        popupDescription: cardsArrayElement.offer.description,
-        popupPhotos: cardsArrayElement.offer.photos[0],
-      }; */
-
-      /* var blockToFillingFunction = {
-        popupAvatar: function () {
-          popupAvatar.src = cardsArrayElement.author.avatar;
-        },
-        popupTitle: function () {
-          popupTitle.textContent = cardsArrayElement.offer.title;
-        },
-        popupAddress: function () {
-          popupAddress.textContent = cardsArrayElement.offer.address;
-        },
-        popupPrice: function () {
-          popupPrice.textContent = cardsArrayElement.offer.price + '₽/ночь';
-        },
-        popupType: function () {
-          popupType.textContent = window.data.appartmentsTypeToRus[cardsArrayElement.offer.type];
-        },
-        popupCapacity: function () {
-          popupCapacity.textContent = cardsArrayElement.offer.rooms + ' комнаты для ' + cardsArrayElement.offer.guests + ' гостей';
-        },
-        popupTime: function () {
-          popupTime.textContent = 'Заезд после ' + cardsArrayElement.offer.checkin + ', выезд до ' + cardsArrayElement.offer.checkout;
-        },
-        popupFeatures: function () {
-          popupFeatures.innerHTML = '';
-          var featuresFragment = document.createDocumentFragment();
-          for (var i = 0; i < cardsArrayElement.offer.features.length; i++) {
-            var feature = card.querySelector('.popup__feature--' + cardsArrayElement.offer.features[i]).cloneNode();
-            featuresFragment.appendChild(feature);
-          }
-          popupFeatures.appendChild(featuresFragment);
-        },
-        popupDescription: function () {
-          popupDescription.textContent = cardsArrayElement.offer.description;
-        },
-        popupPhotos: function () {
-          var photoFragment = document.createDocumentFragment();
-          for (var j = 0; j < cardsArrayElement.offer.photos.length; j++) {
-            var photo = card.querySelector('.popup__photo').cloneNode();
-            photo.src = cardsArrayElement.offer.photos[j];
-            photoFragment.appendChild(photo);
-          }
-          popupPhotos.innerHTML = '';
-          popupPhotos.appendChild(photoFragment);
-        },
-      }; */
-
-
-      // var featuresFragment = document.createDocumentFragment();
-      // for (var i = 0; i < cardsArrayElement.offer.features.length; i++) {
-      //   var feature = card.querySelector('.popup__feature--' + cardsArrayElement.offer.features[i]).cloneNode();
-      //   featuresFragment.appendChild(feature);
-      // }
-
-      // var photoFragment = document.createDocumentFragment();
-      // for (var j = 0; j < cardsArrayElement.offer.photos.length; j++) {
-      //   var photo = card.querySelector('.popup__photo').cloneNode();
-      //   photo.src = cardsArrayElement.offer.photos[j];
-      //   photoFragment.appendChild(photo);
-      // }
-
-      // popupTitle.textContent = cardsArrayElement.offer.title;
-      // popupAddress.textContent = cardsArrayElement.offer.address;
-      // popupPrice.textContent = cardsArrayElement.offer.price + '₽/ночь';
-      // popupType.textContent = window.data.appartmentsTypeToRus[cardsArrayElement.offer.type];
-      // popupCapacity.textContent = cardsArrayElement.offer.rooms + ' комнаты для ' + cardsArrayElement.offer.guests + ' гостей';
-      // popupTime.textContent = 'Заезд после ' + cardsArrayElement.offer.checkin + ', выезд до ' + cardsArrayElement.offer.checkout;
-      // popupFeatures.innerHTML = '';
-      // popupFeatures.appendChild(featuresFragment);
-      // popupDescription.textContent = cardsArrayElement.offer.description;
-      // popupPhotos.innerHTML = '';
-      // popupPhotos.appendChild(photoFragment);
-      // popupAvatar.src = cardsArrayElement.author.avatar;
     },
   };
 

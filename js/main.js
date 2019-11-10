@@ -1,9 +1,6 @@
 'use strict';
 
 (function () {
-  // var errorBlock = document.querySelector('.error');
-  // var successBlock = document.querySelector('.success');
-
   window.main = {
 
     // Функция показа сообщения об ошибке

@@ -29,11 +29,11 @@
   // Инпут check-out
   var checkout = adForm.querySelector('[name="timeout"]');
   // Инпут загрузки фото жилья
-  var appartmentsPhotoInput = adForm.querySelector('.ad-form__input');
+  var imagesInput = adForm.querySelector('.ad-form__input');
   // Блок для превью загруженного фото жилья
-  var appartmentsPhotoPreview = adForm.querySelector('.ad-form__photo');
-  var getAppartmentsPhoto = function () {
-    return appartmentsPhotoPreview.querySelector('img');
+  var imagesPreview = adForm.querySelector('.ad-form__photo');
+  var getImages = function () {
+    return imagesPreview.querySelector('img');
   };
 
   var onTimeChange = function (evt) {
@@ -48,17 +48,14 @@
     output.value = time;
   };
 
-  // adForm.classList.add('ad-form--disabled'); -- по умолчанию
-  /*
-  3 Все < input > и < select > формы.ad - form заблокированы с помощью атрибута disabled, добавленного на них или на их родительские блоки fieldset;
-  */
+  /* Блокируем все fieldset по умолчанию  */
   adFormFieldsets.forEach(function (element) {
     element.setAttribute('disabled', 'disabled');
   });
 
   var validatePrice = function () {
     var housingType = adFormType.value;
-    var minPrice = window.data.typeToMinPrice[window.data.appartmentsTypeToRus[housingType]]; adFormPrice.setAttribute('min', minPrice);
+    var minPrice = window.data.typeToMinPrice[window.data.appartmentsTypeToTranslation[housingType]]; adFormPrice.setAttribute('min', minPrice);
   };
 
   var validateGuests = function () {
@@ -80,12 +77,35 @@
     }
   };
 
+  var onSubmitBtnPress = function (evt) {
+    evt.preventDefault();
+    window.upload(window.data.Url.UPLOAD, new FormData(adForm), onSuccessSubmit, onErrorSubmit);
+  };
+
+  var deactivate = function () {
+    adForm.reset();
+    avatarPreview.querySelector('img').src = avatarMockSrc;
+    avatarPreview.removeEventListener('change', window.images.onInputChange);
+    var appartmentsPhoto = getImages();
+    if (appartmentsPhoto) {
+      imagesPreview.innerHTML = '';
+    }
+    imagesPreview.removeEventListener('change', window.images.onInputChange);
+    adForm.classList.add('ad-form--disabled');
+    adFormFieldsets.forEach(function (element) {
+      element.setAttribute('disabled', 'disabled');
+    });
+    address = window.map.getMainPinAddress(window.map.mainPinDefaultCoords);
+    window.form.setAddress(address);
+
+  };
+
   var onSuccessSubmit = function () {
     window.main.showSuccessMessage();
     window.map.deactivateMap();
-    window.form.deactivate();
+    deactivate();
 
-    adForm.removeEventListener('submit', window.form.onSubmitBtnPress);
+    adForm.removeEventListener('submit', onSubmitBtnPress);
   };
 
   var onErrorSubmit = function () {
@@ -94,7 +114,9 @@
   };
 
   window.form = {
-    getAppartmentsPhoto: getAppartmentsPhoto,
+    adForm: adForm,
+    avatarPreview: avatarPreview,
+    imagesPreview: imagesPreview,
 
     setAddress: function (address) {
       // var address = window.map.getMainPinAddress(window.map.mainPinCoords);
@@ -107,45 +129,26 @@
       });
       address = window.map.getMainPinAddress(window.map.mainPinDefaultCoords);
       this.setAddress(address);
-      // Добавляем возможность загрузки фото жилья:
-      window.loadImg(avatarInput, avatarPreview);
+      // Добавляем возможность загрузки аватара:
+      window.images.loadImg(avatarInput, avatarPreview);
       checkin.addEventListener('change', onTimeChange);
       checkout.addEventListener('change', onTimeChange);
       // Добавляем возможность загрузки фото жилья:
-      window.loadImg(appartmentsPhotoInput, appartmentsPhotoPreview);
+      window.images.loadImg(imagesInput, imagesPreview);
+      // Обработчик клика на кнопку отправки
       adFormSubmit.addEventListener('click', function () {
         validateGuests();
         validatePrice();
       });
+      // Обработчик клика на кнопку сброса
       adFormReset.addEventListener('click', function (evt) {
         evt.preventDefault();
         window.map.deactivateMap();
-        window.form.deactivate();
+        deactivate();
       });
-      adForm.addEventListener('submit', window.form.onSubmitBtnPress);
+      // Обработчик на событие отправки формы
+      adForm.addEventListener('submit', onSubmitBtnPress);
     },
-
-    onSubmitBtnPress: function (evt) {
-      evt.preventDefault();
-      window.upload(window.data.Url.UPLOAD, new FormData(adForm), onSuccessSubmit, onErrorSubmit);
-
-    },
-
-    deactivate: function () {
-      adForm.reset();
-      avatarPreview.querySelector('img').src = avatarMockSrc;
-      var appartmentsPhoto = getAppartmentsPhoto();
-      if (appartmentsPhoto) {
-        appartmentsPhoto.src = '';
-      }
-      adForm.classList.add('ad-form--disabled');
-      adFormFieldsets.forEach(function (element) {
-        element.setAttribute('disabled', 'disabled');
-      });
-      address = window.map.getMainPinAddress(window.map.mainPinDefaultCoords);
-      window.form.setAddress(address);
-
-    }
   };
 
   // Устанавливаем адрес метки в соответсвующее поле

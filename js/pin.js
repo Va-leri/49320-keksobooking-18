@@ -2,9 +2,9 @@
 
 (function () {
   // Задаем размеры метки
-  var PIN_SIZE = {
-    width: 50,
-    height: 70,
+  var PinSize = {
+    WIDTH: 50,
+    HEIGHT: 70,
   };
 
   // Находим шаблон метки .map__pin из шаблона #pin
@@ -15,12 +15,12 @@
 
   window.pin = {
     // Функция отрисовки меток во фрагмент
-    renderPins: function (appartmentsArray) {
+    render: function (appartmentsArray) {
 
       appartmentsArray.forEach(function (element, index) {
         var pin = mapPinTemplate.cloneNode(true);
         pin.number = index;
-        pin.style = 'left: ' + (element.location.x - PIN_SIZE.width / 2) + 'px; top:' + (element.location.y - PIN_SIZE.height) + 'px;';
+        pin.style = 'left: ' + (element.location.x - PinSize.WIDTH / 2) + 'px; top:' + (element.location.y - PinSize.HEIGHT) + 'px;';
         pin.querySelector('img').src = element.author.avatar;
         pin.querySelector('img').alt = element.offer.title;
         fragment.appendChild(pin);
