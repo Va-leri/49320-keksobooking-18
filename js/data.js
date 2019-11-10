@@ -27,6 +27,12 @@
     'Дворец': 10000,
   };
 
+  var PriceLevel = {
+    LOW: 'low',
+    MIDDLE: 'middle',
+    HIGH: 'high',
+  };
+
   var priceLevelToMinPrice = {
     'middle': 10000,
     'high': 50000,
@@ -45,6 +51,7 @@
     appartmentsTypeToTranslation: appartmentsTypeToTranslation,
     roomsToCapacity: roomsToCapacity,
     typeToMinPrice: typeToMinPrice,
+    PriceLevel: PriceLevel,
     priceLevelToMinPrice: priceLevelToMinPrice,
     priceLevelToMaxPrice: priceLevelToMaxPrice,
 
