@@ -2,32 +2,34 @@
 
 (function () {
   var cardTemplate = document.querySelector('#card').content;
-
+  var card;
 
   window.card = {
+    block: card,
+
     render: function (cardsArrayElement) {
-      var card = cardTemplate.cloneNode(true);
+      this.block = cardTemplate.cloneNode(true);
       // Находим блоки в шаблоне карточки
       // Блок аватара
-      var popupAvatar = card.querySelector('.popup__avatar');
+      var popupAvatar = this.block.querySelector('.popup__avatar');
       // Блок заголовка
-      var popupTitle = card.querySelector('.popup__title');
+      var popupTitle = this.block.querySelector('.popup__title');
       // Блок адреса
-      var popupAddress = card.querySelector('.popup__text--address');
+      var popupAddress = this.block.querySelector('.popup__text--address');
       // Блок цены
-      var popupPrice = card.querySelector('.popup__text--price');
+      var popupPrice = this.block.querySelector('.popup__text--price');
       // Блок типа жилья
-      var popupType = card.querySelector('.popup__type');
+      var popupType = this.block.querySelector('.popup__type');
       // Блок вместимости
-      var popupCapacity = card.querySelector('.popup__text--capacity');
+      var popupCapacity = this.block.querySelector('.popup__text--capacity');
       // Блок времени заезда и выезда
-      var popupTime = card.querySelector('.popup__text--time');
+      var popupTime = this.block.querySelector('.popup__text--time');
       // Блок удобств
-      var popupFeatures = card.querySelector('.popup__features');
+      var popupFeatures = this.block.querySelector('.popup__features');
       // Блок описания
-      var popupDescription = card.querySelector('.popup__description');
+      var popupDescription = this.block.querySelector('.popup__description');
       // Блок фото жилья
-      var popupPhotos = card.querySelector('.popup__photos');
+      var popupPhotos = this.block.querySelector('.popup__photos');
 
       var cardBlocksNames = ['avatar', 'title', 'address', 'price', 'type', 'capacity', 'time', 'features', 'description', 'photos'];
 
@@ -87,7 +89,7 @@
           set: function () {
             var featuresFragment = document.createDocumentFragment();
             cardsArrayElement.offer.features.forEach(function (element) {
-              var feature = card.querySelector('.popup__feature--' + element).cloneNode();
+              var feature = window.card.block.querySelector('.popup__feature--' + element).cloneNode();
               featuresFragment.appendChild(feature);
             });
             popupFeatures.innerHTML = '';
@@ -108,7 +110,7 @@
             var photoFragment = document.createDocumentFragment();
 
             cardsArrayElement.offer.photos.forEach(function (element) {
-              var photo = card.querySelector('.popup__photo').cloneNode();
+              var photo = window.card.block.querySelector('.popup__photo').cloneNode();
               photo.src = element;
               photoFragment.appendChild(photo);
             });
@@ -128,7 +130,38 @@
         }
       });
 
-      return card;
+      return this.block;
+    },
+
+    // Функция удаления карточки объявления
+    delete: function () {
+      window.card.block.remove();
+      if (window.pin.active) {
+        window.pin.active.classList.remove('map__pin--active');
+      }
+    },
+
+    // Функция вставки карточки объявления
+    insert: function (arrayElement) {
+      if (window.card.block) {
+        window.card.delete();
+      }
+      window.map.block.insertBefore(window.card.render(arrayElement), window.filter.block);
+      window.card.block = document.querySelector('.map__card');
+
+      // Обработчик Esc
+      var onCardEscPress = function (evt) {
+        window.util.isEscEvent(evt, function () {
+          window.card.delete();
+        });
+        document.removeEventListener('keydown', onCardEscPress);
+      };
+
+      document.addEventListener('keydown', onCardEscPress);
+      var closeBtn = window.card.block.querySelector('.popup__close');
+      closeBtn.addEventListener('click', function () {
+        window.card.delete();
+      });
     },
   };
 

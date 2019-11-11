@@ -2,6 +2,11 @@
 
 (function () {
   window.main = {
+    // Функция активации страницы
+    activatePage: function () {
+      window.map.activate();
+      window.form.activate();
+    },
 
     // Функция показа сообщения об ошибке
     showError: function () {
