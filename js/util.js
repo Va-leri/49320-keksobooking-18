@@ -10,7 +10,10 @@
     DONE: 200,
   };
 
+  var SERVER_TIME = 10000; // ms
+
   window.util = {
+    SERVER_TIME: SERVER_TIME,
     XhrStatus: XhrStatus,
 
     isEnterEvent: function (evt, action) {

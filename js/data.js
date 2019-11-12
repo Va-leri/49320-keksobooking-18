@@ -1,8 +1,7 @@
 'use strict';
 
 (function () {
-  var UPLOAD_URL = 'https://js.dump.academy/keksobooking';
-  var LOAD_URL = 'https://js.dump.academy/keksobooking/data';
+  var SERVER_URL = 'https://js.dump.academy/keksobooking';
 
   // Исходные данные
 
@@ -47,6 +46,7 @@
 
 
   window.data = {
+    SERVER_URL: SERVER_URL,
     appartmentsArray: appartmentsArray,
     appartmentsTypeToTranslation: appartmentsTypeToTranslation,
     roomsToCapacity: roomsToCapacity,
@@ -54,12 +54,6 @@
     PriceLevel: PriceLevel,
     priceLevelToMinPrice: priceLevelToMinPrice,
     priceLevelToMaxPrice: priceLevelToMaxPrice,
-
-    Url: {
-      UPLOAD: UPLOAD_URL,
-      LOAD: LOAD_URL,
-    },
-
   };
 })();
 

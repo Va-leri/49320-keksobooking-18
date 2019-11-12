@@ -79,7 +79,7 @@
 
   var onSubmitBtnPress = function (evt) {
     evt.preventDefault();
-    window.upload(window.data.Url.UPLOAD, new FormData(adForm), onSuccessSubmit, onErrorSubmit);
+    window.backend.upload(new FormData(adForm), onSuccessSubmit, onErrorSubmit);
   };
 
   var deactivate = function () {

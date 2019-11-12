@@ -89,7 +89,7 @@
     mainPinCoords.x = mainPin.offsetLeft;
     mainPinCoords.y = mainPin.offsetTop;
 
-    window.load.getData(window.data.Url.LOAD, onSuccessLoad, onErrorLoad);
+    window.backend.load(onSuccessLoad, onErrorLoad);
     mainPinHeight += ACTIVE_PIN_TAIL;
   };
 
@@ -160,12 +160,10 @@
       mainPinCoords.y -= shift.y;
 
       var checkLimits = function (axis) {
-        switch (true) {
-          case (mainPinCoords[axis] < mapLimits[axis + 'Min']):
-            mainPinCoords[axis] = mapLimits[axis + 'Min'];
-            break;
-          case (mainPinCoords[axis] > mapLimits[axis + 'Max']):
-            mainPinCoords[axis] = mapLimits[axis + 'Max'];
+        if (mainPinCoords[axis] < mapLimits[axis + 'Min']) {
+          mainPinCoords[axis] = mapLimits[axis + 'Min'];
+        } else if (mainPinCoords[axis] > mapLimits[axis + 'Max']) {
+          mainPinCoords[axis] = mapLimits[axis + 'Max'];
         }
       };
 

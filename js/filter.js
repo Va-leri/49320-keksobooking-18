@@ -1,9 +1,6 @@
 'use strict';
 
 (function () {
-  // Находим блок фильтров
-  var filtersBlock = window.map.block.querySelector('.map__filters-container');
-
   // Задаем имена имеющихся фильтров
   var FILTER_NAMES = [
     'type',
@@ -20,6 +17,10 @@
     'guests',
   ];
 
+  var FEATURES_PREFIX = 'filter-';
+
+  // Находим блок фильтров
+  var filtersBlock = window.map.block.querySelector('.map__filters-container');
 
   // Создаем массив фильтров
   var filters = [];
@@ -37,7 +38,6 @@
 
       // Метод определения значения фильтра
       getFilterValue: function () {
-        var FEATURES_PREFIX = 'filter-';
         if (this.name !== 'features') {
           var filterValue = this.node.value;
         } else {
